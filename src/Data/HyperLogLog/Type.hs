@@ -4,6 +4,7 @@
 {-# LANGUAGE FlexibleContexts          #-}
 {-# LANGUAGE FlexibleInstances         #-}
 {-# LANGUAGE FunctionalDependencies    #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving#-}
 {-# LANGUAGE MultiParamTypeClasses     #-}
 {-# LANGUAGE RankNTypes                #-}
 {-# LANGUAGE ScopedTypeVariables       #-}
@@ -55,6 +56,7 @@ module Data.HyperLogLog.Type
 import Control.Applicative
 #endif
 
+import Control.DeepSeq (NFData (..))
 import Control.Lens
 import Control.Monad
 import Crypto.MAC.SipHash
@@ -74,11 +76,7 @@ import qualified Data.Vector.Unboxed.Mutable as MV
 #if __GLASGOW_HASKELL__ < 710
 import Data.Word
 #endif
-#if __GLASGOW_HASKELL__ < 706
-import Generics.Deriving hiding (D, to)
-#else
 import GHC.Generics hiding (D, to)
-#endif
 import GHC.Int
 #if __GLASGOW_HASKELL__ >= 708
 import Data.Type.Coercion (Coercion(..))
@@ -116,7 +114,7 @@ import Data.Type.Coercion (Coercion(..))
 -- Note how 'insert' can be used to add new observations to the
 -- approximate counter.
 newtype HyperLogLog p = HyperLogLog { runHyperLogLog :: V.Vector Rank }
-    deriving (Eq, Show, Generic)
+    deriving (Eq, Show, Generic, NFData)
 
 #if __GLASGOW_HASKELL__ >= 708
 -- | If two types @p@ and @q@ reify the same configuration, then we can coerce
